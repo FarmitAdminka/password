@@ -2,13 +2,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-if (!file_exists('../vendor/autoload.php')) {
-    die('Файл autoload.php не найден!');
-}
-
-require '../vendor/autoload.php';
-
-
 use phpseclib\Crypt\RSA;
 require '../vendor/autoload.php';
 
