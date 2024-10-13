@@ -3,7 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 use phpseclib\Crypt\RSA;
-require '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
 
 function gs($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
