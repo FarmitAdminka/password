@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? null;
 
     // Логируем входящие данные
-    error_log("POST данные: " . print_r($_POST, true), 3, "/tmp/mylog.log");
+    error_log("POST данные: " . print_r($_POST, true), 3, __DIR__ . "/mylog.log");
 
     // Если пароль передан
     if ($password) {
