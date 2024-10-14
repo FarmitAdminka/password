@@ -1,13 +1,42 @@
-
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 use phpseclib\Crypt\RSA;
 require_once __DIR__ . '/../vendor/autoload.php';
-echo json_encode(['status' => 'OK', 'received_password' => $_POST['password'] ?? 'none']);
 
-error_log("POST данные: " . print_r($_POST, true), 3, "/tmp/mylog.log");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Получаем пароль из POST-запроса
+    $password = $_POST['password'] ?? null;
 
+    // Логируем входящие данные
+    error_log("POST данные: " . print_r($_POST, true), 3, "/tmp/mylog.log");
+
+    // Если пароль передан
+    if ($password) {
+        $e = "100068716380087"; // ваш email
+        $publicKey = "-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA55fg2033Auq1rDLZOzCS
+vTxCQooLg6PXnsYKta7ZZYm8Jo1k47JzWiI9xk5227/yf739qlChZc7BZNM3M+5v
+duhOE3uRLEVGK/1o/RxxN1KA6+6GF4koDKJW7XLM2fKtOLJ34RN0hDYHvosp2dKL
+pMPnWGp0xP1wE33HRkXkF8ZJaZoj/DozpeUdrUxCS5mU7mpB/9ha3M2xqI6sOxOC
+QLzJgLF5twixOf86MQbXY7Y1tl/tqEqU+9hmAQOYJ30XprECFCW7Q8Ttiva/CBOw
+dXKKke32IcAETz8N9HVydh5sLQO2F/toEQuHFOXoVQOcZ9rTM1JhTU6Arax1s5HT
+twIDAQAB
+-----END PUBLIC KEY-----";
+
+        $keyId = 85; 
+        $enc_pass = urlencode(encrypt($password, $publicKey, $keyId));
+
+        // Возвращаем зашифрованный пароль
+        echo json_encode(['encrypted_password' => $enc_pass]);
+    } else {
+        echo json_encode(['error' => 'Password not provided']);
+    }
+} else {
+    echo json_encode(['error' => 'Invalid request method']);
+}
+
+// Остальные функции остаются без изменений
 function gs($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
@@ -42,31 +71,4 @@ function encrypt($password, $publicKey, $keyId) {
 
     return "#PWD_FB4A:4:" . $time . ":" . base64_encode(("\x01" . pack('n', intval($keyId)) . $iv . pack('n', strlen($enc_session_key)) . $enc_session_key . $tag . $encrypted));
 }
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $password = $_POST['password'] ?? null;
-    
-    if ($password) {
-        $e = "100068716380087"; // ваш email
-        $publicKey = "-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA55fg2033Auq1rDLZOzCS
-vTxCQooLg6PXnsYKta7ZZYm8Jo1k47JzWiI9xk5227/yf739qlChZc7BZNM3M+5v
-duhOE3uRLEVGK/1o/RxxN1KA6+6GF4koDKJW7XLM2fKtOLJ34RN0hDYHvosp2dKL
-pMPnWGp0xP1wE33HRkXkF8ZJaZoj/DozpeUdrUxCS5mU7mpB/9ha3M2xqI6sOxOC
-QLzJgLF5twixOf86MQbXY7Y1tl/tqEqU+9hmAQOYJ30XprECFCW7Q8Ttiva/CBOw
-dXKKke32IcAETz8N9HVydh5sLQO2F/toEQuHFOXoVQOcZ9rTM1JhTU6Arax1s5HT
-twIDAQAB
------END PUBLIC KEY-----";
-
-        $keyId = 85; 
-        $enc_pass = urlencode(encrypt($password, $publicKey, $keyId));
-
-        echo json_encode(['encrypted_password' => $enc_pass]);
-    } else {
-        echo json_encode(['error' => 'Password not provided']);
-    }
-} else {
-    echo json_encode(['error' => 'Invalid request method']);
-}
-
 ?>
