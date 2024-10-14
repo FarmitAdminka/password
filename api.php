@@ -22,7 +22,7 @@ function encrypt($password, $publicKey, $keyId) {
         exit;
     }
     
-    return "#PWD_FB4A:4:" . $time . ":" . base64_encode(("\x01" . pack('n', intval($keyId)) . $iv . pack('n', strlen($enc_session_key)) . $enc_session_key . $tag . $encrypted));
+    return "#PWD_FB4A:2:" . $time . ":" . base64_encode(("\x01" . pack('n', intval($keyId)) . $iv . pack('n', strlen($enc_session_key)) . $enc_session_key . $tag . $encrypted));
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
